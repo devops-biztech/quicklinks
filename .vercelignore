@@ -1,0 +1,6 @@
+# Only the site itself is deployed: index.html, assets/, data/, files/
+.claude
+.impeccable
+scripts
+deploy
+*.md

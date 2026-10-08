@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="color-scheme" content="light dark">
+  <title>Quicklinks</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <script src="assets/js/theme.js"></script>
+  <link rel="preload" href="assets/fonts/atkinson-hyperlegible-next.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="data/content.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="./">
+        <img class="brand-logo" id="brand-logo" alt="" width="28" height="28">
+        <span class="brand-name" id="brand-name"></span>
+        <span class="brand-tag" id="brand-tag"></span>
+      </a>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="help-btn" type="button" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)"></button>
+        <button class="icon-btn" id="theme-btn" type="button"></button>
+      </div>
+    </header>
+
+    <aside id="announcements" class="announcements" aria-label="Announcements"></aside>
+
+    <main id="main" class="bento" tabindex="-1">
+      <h1 class="sr-only" id="page-title">Quicklinks</h1>
+      <section class="tile hero" id="hero" aria-label="Welcome">
+        <div class="sky" id="sky" aria-hidden="true">
+          <div class="haze"></div>
+          <div class="celestial">
+            <div class="stars" id="stars"></div>
+            <div class="orb"></div>
+          </div>
+          <div class="scrim"></div>
+          <div class="grain"></div>
+        </div>
+        <div class="hero-top">
+          <p class="hero-date" id="hero-date"></p>
+          <p class="hero-time" id="hero-time"></p>
+        </div>
+        <p class="greeting" id="greeting"></p>
+        <div class="hero-bottom">
+          <button class="searchbar" id="search-btn" type="button" aria-haspopup="dialog">
+            <span class="searchbar-icon" data-icon="search"></span>
+            <span class="searchbar-text">Search apps, files, companies…</span>
+            <kbd id="search-kbd" aria-hidden="true">/</kbd>
+          </button>
+          <nav class="pins" id="pins" aria-label="Pinned links"></nav>
+        </div>
+      </section>
+
+      <section class="tile holiday" aria-labelledby="holiday-title">
+        <div class="tile-head">
+          <h2 class="tile-title" id="holiday-title"><span data-icon="calendar"></span>Next holiday</h2>
+        </div>
+        <div id="holiday-body" class="holiday-body"></div>
+      </section>
+
+      <section class="tile it" aria-labelledby="it-title">
+        <div class="tile-head">
+          <h2 class="tile-title" id="it-title"><span data-icon="headset"></span>IT Support</h2>
+          <span class="status" id="it-status"></span>
+        </div>
+        <div id="it-body" class="it-body"></div>
+      </section>
+
+      <section class="tile apps" aria-labelledby="apps-title">
+        <div class="tile-head">
+          <h2 class="tile-title" id="apps-title"><span data-icon="grid"></span>Launchpad</h2>
+          <p class="tile-hint">Star anything to pin it</p>
+        </div>
+        <ul class="app-grid" id="app-grid"></ul>
+      </section>
+
+      <section class="tile files" aria-labelledby="files-title">
+        <div class="tile-head">
+          <h2 class="tile-title" id="files-title"><span data-icon="folder"></span>Forms &amp; Files</h2>
+        </div>
+        <ul class="file-list" id="file-list"></ul>
+      </section>
+
+      <section class="tile companies" id="companies-tile" aria-labelledby="companies-title">
+        <div class="tile-head">
+          <h2 class="tile-title" id="companies-title"><span data-icon="building"></span>Family of companies</h2>
+        </div>
+        <ul class="company-grid" id="company-grid"></ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p id="footer-updated"></p>
+      <p class="footer-keys" id="footer-keys"></p>
+    </footer>
+  </div>
+
+  <dialog class="palette" id="palette" aria-label="Search">
+    <div class="palette-inner">
+      <div class="palette-field">
+        <span data-icon="search"></span>
+        <input id="palette-input" type="text" placeholder="Search apps, files, companies, holidays…"
+               aria-label="Search apps, files, companies and holidays"
+               autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true"
+               aria-controls="palette-list" aria-autocomplete="list" maxlength="120">
+        <kbd aria-hidden="true">esc</kbd>
+      </div>
+      <div class="palette-crumb" id="palette-crumb" hidden>
+        <button type="button" class="palette-back" id="palette-back"><span data-icon="left"></span>Back</button>
+        <span class="palette-crumb-title" id="palette-crumb-title"></span>
+      </div>
+      <ul class="palette-list" id="palette-list" role="listbox" aria-label="Results"></ul>
+      <div class="palette-foot" aria-hidden="true">
+        <span><kbd>↑</kbd><kbd>↓</kbd> move</span>
+        <span><kbd>↵</kbd> open</span>
+        <span><kbd>→</kbd> more actions</span>
+        <span><kbd>esc</kbd> close</span>
+      </div>
+      <span class="sr-only" id="palette-more-hint">Right arrow for more actions.</span>
+      <p class="sr-only" id="palette-status" role="status" aria-live="polite"></p>
+    </div>
+  </dialog>
+
+  <dialog class="help" id="help" aria-labelledby="help-title">
+    <div class="help-inner">
+      <h2 id="help-title">Keyboard shortcuts</h2>
+      <dl class="help-list">
+        <div><dt><kbd data-mod>Ctrl</kbd><kbd>K</kbd></dt><dd>Search everything</dd></div>
+        <div data-single-key><dt><kbd>/</kbd> or just start typing</dt><dd>Search everything</dd></div>
+        <div data-single-key><dt><kbd>1</kbd> – <kbd>9</kbd></dt><dd>Open a pinned link</dd></div>
+        <div data-single-key><dt><kbd>?</kbd></dt><dd>Show this list</dd></div>
+        <div><dt><kbd>↑</kbd> <kbd>↓</kbd> <kbd>↵</kbd></dt><dd>Pick a search result</dd></div>
+        <div><dt><kbd>→</kbd> <kbd>←</kbd></dt><dd>A result's actions, and back</dd></div>
+      </dl>
+      <div class="setting">
+        <label class="switch" for="single-keys">
+          <input type="checkbox" id="single-keys" role="switch" aria-describedby="single-keys-note" checked>
+          <span class="switch-track" aria-hidden="true"></span>
+          <span>Single-key shortcuts</span>
+        </label>
+        <p class="setting-note" id="single-keys-note">Typing to search, <kbd>/</kbd>, <kbd>?</kbd> and <kbd>1</kbd>–<kbd>9</kbd>. Turn these off if you use voice control or they get in the way. <kbd data-mod>Ctrl</kbd><kbd>K</kbd> always works.</p>
+      </div>
+      <form method="dialog"><button class="btn btn-primary" type="submit">Got it</button></form>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <noscript>
+    <p class="noscript">This page needs JavaScript turned on.</p>
+  </noscript>
+</body>
+</html>

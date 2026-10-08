@@ -1,0 +1,11 @@
+# Local tooling and per-user settings (not part of the site)
+.claude/
+.impeccable/
+
+# Vercel CLI project link
+.vercel/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
