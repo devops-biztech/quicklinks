@@ -15,7 +15,7 @@ window.QUICKLINKS = {
   updated: "2026-10-07",
 
   company: {
-    name: "Meridian",
+    name: "Biztech",
     tagline: "Intranet",
     logo: "assets/logos/company.svg",
   },
@@ -54,15 +54,15 @@ window.QUICKLINKS = {
   },
 
   it: {
-    phone: "(555) 010-4357",
+    phone: "(707) 442-8393",
     ext: "4357",
-    email: "helpdesk@example.com",
+    email: "support@trustbiztech.com",
     // Paste a Teams chat link. For a single person or shared mailbox:
-    // https://teams.microsoft.com/l/chat/0/0?users=helpdesk@example.com
-    teamsChat: "https://teams.microsoft.com/l/chat/0/0?users=helpdesk@example.com",
-    ticketUrl: "mailto:helpdesk@example.com?subject=IT%20Ticket%3A%20",
+    // https://teams.microsoft.com/l/chat/0/0?users=support@trustbiztech.com
+    teamsChat: "https://teams.microsoft.com/l/chat/0/0?users=support@trustbiztech.com",
+    ticketUrl: "mailto:support@trustbiztech.com?subject=IT%20Ticket%3A%20",
     hours: "Mon – Fri · 7:30 AM – 5:30 PM",
-    afterHours: "(555) 010-9111",
+    afterHours: "(707) 442-8393",
   },
 
   /* Launchpad. `tint` is the icon color. */
@@ -133,8 +133,8 @@ window.QUICKLINKS = {
     {
       id: "website",
       name: "Company Website",
-      description: "meridian.example.com",
-      url: "https://example.com/",
+      description: "trustbiztech.com",
+      url: "https://trustbiztech.com/",
       icon: "globe",
       tint: "#7c4dff",
       keywords: "site public web",
@@ -213,35 +213,35 @@ window.QUICKLINKS = {
     {
       name: "Northwind Logistics",
       logo: "assets/logos/northwind.svg",
-      phone: "(555) 014-2200",
+      phone: "(707) 014-2200",
       email: "info@northwind.example.com",
       website: "https://northwind.example.com/",
     },
     {
       name: "Harbor & Pine Builders",
       logo: "assets/logos/harbor-pine.svg",
-      phone: "(555) 018-7310",
+      phone: "(707) 018-7310",
       email: "info@harborpine.example.com",
       website: "https://harborpine.example.com/",
     },
     {
       name: "Summit Ridge Supply",
       logo: "assets/logos/summit-ridge.svg",
-      phone: "(555) 012-9045",
+      phone: "(707) 012-9045",
       email: "info@summitridge.example.com",
       website: "https://summitridge.example.com/",
     },
     {
       name: "Bluefield Energy",
       logo: "assets/logos/bluefield.svg",
-      phone: "(555) 016-3388",
+      phone: "(707) 016-3388",
       email: "info@bluefield.example.com",
       website: "https://bluefield.example.com/",
     },
     {
       name: "Cedar Point Realty",
       logo: "assets/logos/cedar-point.svg",
-      phone: "(555) 011-5600",
+      phone: "(707) 011-5600",
       email: "info@cedarpoint.example.com",
       website: "https://cedarpoint.example.com/",
     },
