@@ -91,6 +91,10 @@ for (const key of ["teamsChat", "ticketUrl"]) {
 }
 if (data.updated && !isDate(data.updated)) errors.push(`"updated" must be YYYY-MM-DD`);
 
+if (data.companiesTitle != null && typeof data.companiesTitle !== "string") errors.push(`companiesTitle should be text in quotes`);
+if (data.settings?.demo != null && typeof data.settings.demo !== "boolean") errors.push(`settings.demo should be true or false`);
+if (data.settings?.demo === true) warnings.push("Demo mode is on (settings.demo). Turn it off for a real company's intranet.");
+
 const TYPE_PRESETS = ["editorial", "modern", "friendly", "system"];
 if (data.theme?.type && !TYPE_PRESETS.includes(data.theme.type)) errors.push(`theme.type must be one of: ${TYPE_PRESETS.join(", ")}`);
 const looksLikeColor = (c) => /^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|(rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color)\(.+\)|[a-z]+)$/i.test(String(c).trim());

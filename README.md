@@ -25,7 +25,7 @@ company: { name: "Northwind", tagline: "Intranet", logo: "assets/logos/northwind
 theme:   { color: "#0057b8", type: "modern" },
 ```
 
-- **`logo`** is used in the header and as the browser-tab icon. SVG is best.
+- **`logo`** is used in the header and as the browser-tab icon. SVG is best. Leave it empty (`""`) to show the company's initials in the brand color.
 - **`color`** accepts any CSS color. It keeps your hue but is automatically lightened or darkened so links and buttons meet WCAG AA contrast in both light and dark mode. Very bright colors like yellow become a deep gold in light mode, for example.
 - **`type`** sets the voice of the greeting and headings. Everything else always uses Atkinson Hyperlegible Next, a typeface designed for legibility.
 
@@ -40,6 +40,25 @@ The interface font adds ~33KB to every preset except `system`.
 
 **Try a look before committing:** add `?type=modern&color=%23e4572e` to the page address. `%23` is how `#` is written in a URL. Nothing is saved; it only changes what you see.
 
+## Demo mode (showing it to a prospective client)
+
+The `main` branch is a generic demo: "Your Company", sample sister companies, and `settings.demo: true` in `content.js`. Demo mode adds a **Customize demo** button that opens a side panel where you can, live:
+
+- type the client's **company name** and **tagline**
+- drop in their **logo** (SVG or PNG under 1 MB, or leave it empty for their initials)
+- pick their **brand color**. The panel shows the exact shade links and buttons will use after the contrast adjustment.
+- choose a **type style**, scrub the **time of day**, and hide **sister companies** if they don't have any
+
+Changes are saved on that device only. **Copy link** makes a link that reproduces the look anywhere, for example:
+
+```
+https://your-demo.vercel.app/?name=Harborview+Health&color=%230a7d6e&type=friendly
+```
+
+Uploaded logos can't travel in a link, so drop the logo in again when presenting on another device. **Reset** returns to the template defaults. In demo mode, file links show a "demo" note instead of a missing file.
+
+For a real company's intranet, set `settings.demo` to `false`. The panel disappears and `?name=` and `?tagline=` are ignored.
+
 ## Editing content
 
 **Everything lives in [`data/content.js`](data/content.js).** Open it, change the text, save, deploy.
@@ -52,6 +71,7 @@ The interface font adds ~33KB to every preset except `system`.
 | Flag an outage | `itStatus.level` → `"notice"` or `"outage"`, and update `message` |
 | Next year's holidays | `holidays.days` — dates are `YYYY-MM-DD` |
 | Sister company details | `companies` — logos go in `assets/logos/` |
+| Heading over the companies | `companiesTitle`, e.g. `"Smith Group divisions"` |
 | Brand color and type | `theme` — see above |
 
 Icons available for apps: `mail`, `users`, `cloud`, `grid`, `payroll`, `trend`, `shield`, `globe`, `headset`, `phone`, `chat`, `ticket`, `calendar`, `file`, `folder`, `building`, `link`. You can also give an image path like `"assets/icons/adp.png"`.
@@ -119,5 +139,6 @@ assets/js/theme.js       applies saved theme before first paint
 assets/logos/            company logos (placeholders for now)
 assets/fonts/            self-hosted: Atkinson Hyperlegible Next (UI) + one display face per type preset
 scripts/check-content.mjs  content validator
+scripts/serve.mjs        local preview server (no caching)
 deploy/                  nginx config + deploy script
 ```

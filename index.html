@@ -18,7 +18,8 @@
   <div class="shell">
     <header class="topbar">
       <a class="brand" href="./">
-        <img class="brand-logo" id="brand-logo" alt="" width="28" height="28">
+        <img class="brand-logo" id="brand-logo" alt="" width="28" height="28" hidden>
+        <span class="brand-mono" id="brand-mono" aria-hidden="true" hidden></span>
         <span class="brand-name" id="brand-name"></span>
         <span class="brand-tag" id="brand-tag"></span>
       </a>
@@ -89,7 +90,7 @@
 
       <section class="tile companies" id="companies-tile" aria-labelledby="companies-title">
         <div class="tile-head">
-          <h2 class="tile-title" id="companies-title"><span data-icon="building"></span>Schmidbauer Family Mills</h2>
+          <h2 class="tile-title" id="companies-title"><span data-icon="building"></span><span id="companies-title-text">Family of companies</span></h2>
         </div>
         <ul class="company-grid" id="company-grid"></ul>
       </section>
@@ -148,6 +149,87 @@
       </div>
       <form method="dialog"><button class="btn btn-primary" type="submit">Got it</button></form>
     </div>
+  </dialog>
+
+  <!-- Demo mode only (settings.demo in content.js): restyle the page live for a client meeting. -->
+  <button class="demo-fab" id="demo-btn" type="button" aria-controls="demo-panel" aria-expanded="false" hidden>
+    <span data-icon="sparkle"></span>Customize demo
+  </button>
+  <dialog class="demo-panel" id="demo-panel" aria-labelledby="demo-title">
+    <form class="demo-form" id="demo-form" novalidate>
+      <div class="demo-head">
+        <div>
+          <h2 id="demo-title">Make it theirs</h2>
+          <p class="demo-sub">Changes stay on this device. Use “Copy link” to send this look.</p>
+        </div>
+        <button type="button" class="icon-btn" id="demo-close" aria-label="Close customizer"><span data-icon="x"></span></button>
+      </div>
+
+      <div class="demo-field">
+        <label for="demo-name">Company name</label>
+        <input id="demo-name" name="name" type="text" maxlength="60" autocomplete="off" placeholder="Client name">
+      </div>
+      <div class="demo-field">
+        <label for="demo-tagline">Tagline</label>
+        <input id="demo-tagline" name="tagline" type="text" maxlength="40" autocomplete="off" placeholder="Intranet">
+      </div>
+
+      <div class="demo-field">
+        <span class="demo-label" id="demo-logo-label">Logo</span>
+        <div class="demo-logo-row">
+          <span class="demo-logo-preview" id="demo-logo-preview" aria-hidden="true"></span>
+          <label class="btn" for="demo-logo">
+            <span data-icon="upload"></span><span id="demo-logo-action">Upload logo</span>
+          </label>
+          <input id="demo-logo" class="sr-only" type="file" accept="image/svg+xml,image/png,image/jpeg,image/webp" aria-labelledby="demo-logo-label demo-logo-action" aria-describedby="demo-logo-note">
+          <button type="button" class="btn btn-ghost" id="demo-logo-clear" hidden>Remove</button>
+        </div>
+        <p class="demo-note" id="demo-logo-note">SVG or PNG, under 1 MB. Without one, their initials are used.</p>
+      </div>
+
+      <div class="demo-field">
+        <label for="demo-color-text">Brand color</label>
+        <div class="demo-color-row">
+          <input id="demo-color" type="color" value="#3b4bf5" aria-label="Pick brand color">
+          <input id="demo-color-text" name="color" type="text" maxlength="30" autocomplete="off" spellcheck="false" placeholder="#3b4bf5" aria-describedby="demo-color-note">
+        </div>
+        <p class="demo-note" id="demo-color-note"></p>
+      </div>
+
+      <fieldset class="demo-field demo-types">
+        <legend class="demo-label">Type style</legend>
+        <div class="demo-type-grid">
+          <label class="demo-type"><input type="radio" name="type" value="editorial"><span class="demo-type-sample" data-sample="editorial">Good <em>morning</em></span><span class="demo-type-name">Editorial</span></label>
+          <label class="demo-type"><input type="radio" name="type" value="modern"><span class="demo-type-sample" data-sample="modern">Good morning</span><span class="demo-type-name">Modern</span></label>
+          <label class="demo-type"><input type="radio" name="type" value="friendly"><span class="demo-type-sample" data-sample="friendly">Good morning</span><span class="demo-type-name">Friendly</span></label>
+          <label class="demo-type"><input type="radio" name="type" value="system"><span class="demo-type-sample" data-sample="system">Good morning</span><span class="demo-type-name">System</span></label>
+        </div>
+      </fieldset>
+
+      <div class="demo-field">
+        <div class="demo-label-row">
+          <label for="demo-hour">Time of day</label>
+          <output id="demo-hour-out" for="demo-hour">Live</output>
+        </div>
+        <div class="demo-hour-row">
+          <input id="demo-hour" type="range" min="0" max="23.75" step="0.25" aria-describedby="demo-hour-out">
+          <button type="button" class="btn btn-ghost" id="demo-hour-live">Now</button>
+        </div>
+      </div>
+
+      <div class="demo-field">
+        <label class="switch" for="demo-companies">
+          <input type="checkbox" id="demo-companies" role="switch">
+          <span class="switch-track" aria-hidden="true"></span>
+          <span>Show sister companies</span>
+        </label>
+      </div>
+
+      <div class="demo-actions">
+        <button type="button" class="btn btn-primary" id="demo-share"><span data-icon="link"></span>Copy link</button>
+        <button type="button" class="btn btn-ghost" id="demo-reset">Reset</button>
+      </div>
+    </form>
   </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>

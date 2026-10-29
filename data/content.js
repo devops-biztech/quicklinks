@@ -33,7 +33,11 @@ window.QUICKLINKS = {
 
   settings: {
     openLinksInNewTab: true,
+    demo: false,
   },
+
+  // Heading over the sister-company cards.
+  companiesTitle: "Schmidbauer Family Mills",
 
   /* Banner across the top. Shown only between `from` and `until`.
      tone: "info" | "warning" */

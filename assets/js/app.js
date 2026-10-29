@@ -37,6 +37,8 @@
     building: '<path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/><path d="M16 9h2a2 2 0 0 1 2 2v10M2.5 21h19M8 7.5h4M8 11.5h4M8 15.5h4"/>',
     chevron: '<path d="m9.5 6 6 6-6 6"/>',
     left: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
+    sparkle: '<path d="M12 3.5 13.6 9a2 2 0 0 0 1.4 1.4l5.5 1.6-5.5 1.6a2 2 0 0 0-1.4 1.4L12 20.5 10.4 15A2 2 0 0 0 9 13.6L3.5 12 9 10.4A2 2 0 0 0 10.4 9z"/><path d="M19 3v3M17.5 4.5h3"/>',
+    upload: '<path d="M12 15V4m-4.5 4.5L12 4l4.5 4.5M5 20h14"/>',
     up: '<path d="m6 15 6-6 6 6"/>',
     down: '<path d="m6 9 6 6 6-6"/>',
     link: '<path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/>',
@@ -128,8 +130,10 @@
   const extOf = (path) => (String(path).split(/[?#]/)[0].split("/").pop().split(".").slice(1).pop() || "").toLowerCase();
   const fold = (s) => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
+  const unsetMessage = () => (C.settings.demo ? "Demo: in your version, this opens the real link" : "This link hasn't been set up yet");
+
   function openUrl(url) {
-    if (!url) return toast("This link hasn't been set up yet");
+    if (!url) return toast(unsetMessage());
     if (/^(tel|mailto|msteams|sms):/i.test(url) || !C.settings.newTab) { window.location.href = url; return; }
     const win = window.open(url, "_blank");
     if (win) win.opener = null;
@@ -144,7 +148,7 @@
       target: newTab ? "_blank" : null,
       rel: newTab ? "noopener" : null,
       "aria-disabled": url ? null : "true",
-      onclick: url ? null : (e) => { e.preventDefault(); toast("This link hasn't been set up yet"); },
+      onclick: url ? null : (e) => { e.preventDefault(); toast(unsetMessage()); },
       ...props,
     }, ...children, newTab && el("span", { class: "sr-only" }, " (opens in new tab)"));
   }
@@ -253,10 +257,8 @@
     const holidays = isObj(DATA.holidays) ? DATA.holidays : {};
 
     const theme = isObj(DATA.theme) ? DATA.theme : {};
-    // ?type=modern&color=%23e4572e previews a look without editing content.js.
-    const preview = new URLSearchParams(location.search);
-    const type = str(preview.get("type")) || str(theme.type) || "editorial";
-    const color = str(preview.get("color")) || str(theme.color);
+    const type = str(theme.type) || "editorial";
+    const color = str(theme.color);
     if (!TYPE_PRESETS.includes(type)) note(`theme.type must be one of: ${TYPE_PRESETS.join(", ")}`);
     if (color && !CSS.supports("color", color)) note(`theme.color "${color}" isn't a color`);
 
@@ -265,7 +267,8 @@
         type: TYPE_PRESETS.includes(type) ? type : "editorial",
         color: color && CSS.supports("color", color) ? color : "",
       },
-      settings: { newTab: DATA.settings?.openLinksInNewTab !== false },
+      settings: { newTab: DATA.settings?.openLinksInNewTab !== false, demo: DATA.settings?.demo === true },
+      companiesTitle: str(DATA.companiesTitle) || "Family of companies",
       updated: parseDate(DATA.updated),
       company: { name: str(company.name), tagline: str(company.tagline), logo: str(company.logo) },
       status: {
@@ -305,7 +308,7 @@
         const name = named(f, where);
         if (!name) return null;
         return {
-          id: uniqueId(f.id, name, where), name, url: safeUrl(f.file, where), ext: extOf(str(f.file)),
+          id: uniqueId(f.id, name, where), name, url: DATA.settings?.demo === true ? "" : safeUrl(f.file, where), ext: extOf(str(f.file)),
           category: str(f.category), updated: str(f.updated), keywords: words(f.keywords),
         };
       }).filter(Boolean),
@@ -329,6 +332,46 @@
     };
   })();
 
+
+  /* ------------------------------------------------------------------ *
+   * The look: brand name, tagline, logo, color, type preset, sky hour and
+   * whether sister companies show. It starts from content.js.
+   *   Everywhere: ?color=, ?type= and ?hour= preview a look without saving.
+   *   Demo mode (settings.demo): the customizer saves a look on this device,
+   *   and ?name=, ?tagline= and ?companies=0 also work, for share links.
+   * ------------------------------------------------------------------ */
+  const DEMO = C.settings.demo;
+  const MAX_LOGO_BYTES = 1024 * 1024;
+
+  const contentLook = () => ({
+    name: C.company.name, tagline: C.company.tagline, logo: C.company.logo,
+    color: C.theme.color, type: C.theme.type, hour: null, companies: true,
+  });
+
+  // Keep only valid fields from saved state or a URL, so a bad link can't break the page.
+  function validLook(raw) {
+    const out = {};
+    if (!isObj(raw)) return out;
+    if (typeof raw.name === "string") out.name = raw.name.trim().slice(0, 60);
+    if (typeof raw.tagline === "string") out.tagline = raw.tagline.trim().slice(0, 40);
+    if (typeof raw.logo === "string" && (raw.logo === "" || /^data:image\/(png|jpeg|webp|svg\+xml);base64,/.test(raw.logo) || /^assets\//.test(raw.logo))) out.logo = raw.logo;
+    if (typeof raw.color === "string" && (raw.color === "" || CSS.supports("color", raw.color))) out.color = raw.color.trim();
+    if (TYPE_PRESETS.includes(raw.type)) out.type = raw.type;
+    const hour = raw.hour === "" || raw.hour == null ? NaN : Number(raw.hour);
+    if (Number.isFinite(hour) && hour >= 0 && hour < 24) out.hour = hour;
+    if (typeof raw.companies === "boolean") out.companies = raw.companies;
+    return out;
+  }
+
+  function lookFromUrl() {
+    const q = new URLSearchParams(location.search);
+    const pick = (keys) => Object.fromEntries(keys.filter((k) => q.has(k)).map((k) => [k, q.get(k)]));
+    const raw = pick(["color", "type", "hour", ...(DEMO ? ["name", "tagline"] : [])]);
+    if (DEMO && q.has("companies")) raw.companies = q.get("companies") !== "0";
+    return validLook(raw);
+  }
+
+  const look = Object.assign(contentLook(), DEMO ? validLook(store.get("demo", {}, isObj)) : {}, lookFromUrl());
 
   /* ------------------------------------------------------------------ *
    * Search index — everything the palette can find
@@ -541,12 +584,19 @@
     return light && dark ? { H, light, dark, adjusted: Math.abs(light.L - L0) > 0.02 } : null;
   }
 
-  function applyTheme() {
+  const ACCENT_VARS = ["--accent-h", "--accent-l", "--accent-c", "--accent-ink-l", "--accent-dl", "--accent-dc"];
+  const toHex = (rgb) => "#" + rgb.map((v) => v.toString(16).padStart(2, "0")).join("");
+
+  // Returns the fit (or null when the default accent is used), so the demo panel can show what happened.
+  function applyAccent(color) {
     const root = document.documentElement;
-    root.dataset.type = C.theme.type;
-    if (!C.theme.color) return;
-    const fit = fitAccent(C.theme.color);
-    if (!fit) return note(`theme.color "${C.theme.color}" couldn't be made readable; using the default accent`);
+    if (!color) { ACCENT_VARS.forEach((k) => root.style.removeProperty(k)); return null; }
+    const fit = fitAccent(color);
+    if (!fit) {
+      ACCENT_VARS.forEach((k) => root.style.removeProperty(k));
+      note(`theme.color "${color}" couldn't be made readable; using the default accent`);
+      return null;
+    }
     const set = (k, v) => root.style.setProperty(k, v.toFixed(3));
     set("--accent-h", fit.H);
     set("--accent-l", fit.light.L);
@@ -554,32 +604,45 @@
     set("--accent-ink-l", fit.light.inkL);
     set("--accent-dl", fit.dark.L);
     set("--accent-dc", fit.dark.c);
+    return { ...fit, lightHex: toHex(inGamut(fit.light.L, fit.light.c, fit.H)[1]) };
   }
 
   // Hold the reveal until the preset's display face is in (max 1.5s), so the greeting never swaps fonts on screen.
   function displayFontReady() {
-    const face = DISPLAY_FACE[C.theme.type];
+    const face = DISPLAY_FACE[look.type];
     if (!face || !document.fonts) return Promise.resolve();
-    const loads = [document.fonts.load(`1em "${face}"`), C.theme.type === "editorial" && document.fonts.load(`italic 1em "${face}"`)];
+    const loads = [document.fonts.load(`1em "${face}"`), look.type === "editorial" && document.fonts.load(`italic 1em "${face}"`)];
     return Promise.race([Promise.all(loads), new Promise((r) => setTimeout(r, 1500))]).catch(() => {});
   }
 
   /* ------------------------------------------------------------------ *
    * Header, footer, announcements
    * ------------------------------------------------------------------ */
+  const DEFAULT_FAVICON = document.querySelector('link[rel="icon"]')?.getAttribute("href");
+
+  // Brand name, tagline and logo. Runs again whenever the demo panel changes them.
+  function renderBrand() {
+    const name = look.name;
+    document.title = name ? `${name} · Quicklinks` : "Quicklinks";
+    $("#page-title").textContent = name ? `${name} quicklinks` : "Quicklinks";
+    $("#brand-name").textContent = name || "Quicklinks";
+    const tag = $("#brand-tag");
+    tag.textContent = look.tagline;
+    tag.hidden = !look.tagline;
+
+    const img = $("#brand-logo"), mono = $("#brand-mono"), favicon = document.querySelector('link[rel="icon"]');
+    mono.textContent = initials(name || "Quicklinks");
+    const useInitials = () => { img.hidden = true; mono.hidden = false; favicon?.setAttribute("href", DEFAULT_FAVICON); };
+    if (!look.logo) return useInitials();
+    img.onerror = useInitials;
+    img.src = look.logo;
+    img.hidden = false;
+    mono.hidden = true;
+    favicon?.setAttribute("href", look.logo);
+  }
+
   function renderChrome() {
-    const { company } = C;
-    document.title = company.name ? `${company.name} · Quicklinks` : "Quicklinks";
-    $("#page-title").textContent = company.name ? `${company.name} quicklinks` : "Quicklinks";
-    $("#brand-name").textContent = company.name || "Quicklinks";
-    $("#brand-tag").textContent = company.tagline;
-    if (!company.tagline) $("#brand-tag").remove();
-    const logo = $("#brand-logo");
-    if (company.logo) {
-      logo.addEventListener("error", () => logo.remove(), { once: true });
-      logo.src = company.logo;
-    } else logo.remove();
-    if (company.logo) document.querySelector('link[rel="icon"]')?.setAttribute("href", company.logo);
+    renderBrand();
 
     for (const node of document.querySelectorAll("[data-icon]")) node.replaceWith(icon(node.dataset.icon));
     for (const node of document.querySelectorAll("[data-mod]")) node.textContent = MOD;
@@ -637,10 +700,9 @@
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   };
 
-  // ?hour=19.5 previews the sky at any time of day.
-  const hourOverride = parseFloat(new URLSearchParams(location.search).get("hour"));
+  // look.hour (from ?hour=19.5 or the demo panel) previews the sky at any time of day.
   const currentHour = () => {
-    if (!Number.isNaN(hourOverride)) return clamp(hourOverride, 0, 23.99);
+    if (look.hour != null) return clamp(look.hour, 0, 23.99);
     const now = new Date();
     return now.getHours() + now.getMinutes() / 60;
   };
@@ -767,7 +829,7 @@
 
   function renderClock() {
     const now = new Date();
-    if (!Number.isNaN(hourOverride)) now.setHours(Math.floor(currentHour()), Math.round((currentHour() % 1) * 60));
+    if (look.hour != null) now.setHours(Math.floor(currentHour()), Math.round((currentHour() % 1) * 60) % 60);
     const h = currentHour();
     const part = h < 5 ? ["Hello,", "night owl"] : h < 12 ? ["Good", "morning"] : h < 17 ? ["Good", "afternoon"] : h < 22 ? ["Good", "evening"] : ["Hello,", "night owl"];
     const greeting = $("#greeting");
@@ -909,7 +971,9 @@
   }
 
   function renderCompanies() {
-    if (!C.companies.length) { $("#companies-tile").hidden = true; return; }
+    $("#companies-title-text").textContent = C.companiesTitle;
+    $("#companies-tile").hidden = !C.companies.length || !look.companies;
+    if (!C.companies.length) return;
     $("#company-grid").append(...C.companies.map((co) =>
       el("li", { class: "company" },
         el("div", { class: "company-head" },
@@ -1182,6 +1246,163 @@
   });
 
   /* ------------------------------------------------------------------ *
+   * Apply the look. Cheap enough to run on every keystroke in the customizer.
+   * ------------------------------------------------------------------ */
+  let accentFit = null;
+  let lastType = null;
+
+  function applyLook() {
+    document.documentElement.dataset.type = look.type;
+    accentFit = applyAccent(look.color);
+    if (document.getElementById("brand-mono")) renderBrand();
+    const tile = $("#companies-tile");
+    if (tile) tile.hidden = !C.companies.length || !look.companies;
+    paintSky();
+    renderClock();
+    if (lastType !== null && lastType !== look.type) displayFontReady().then(fitLegibility);
+    lastType = look.type;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Demo customizer (settings.demo only)
+   * ------------------------------------------------------------------ */
+  function setupDemo() {
+    if (!DEMO) return;
+    const panel = $("#demo-panel");
+    const fab = $("#demo-btn");
+    const field = (id) => document.getElementById(id);
+    const colorPick = field("demo-color"), colorText = field("demo-color-text");
+    const hourRange = field("demo-hour"), hourOut = field("demo-hour-out");
+    const logoNote = field("demo-logo-note");
+    const LOGO_HINT = logoNote.textContent;
+    document.documentElement.classList.add("is-demo");
+    fab.hidden = false;
+
+    const save = () => {
+      const { hour, ...keep } = look; // the time of day is a presentation aid, not part of the look
+      store.set("demo", keep);
+    };
+    const hourLabel = (h) => {
+      const d = new Date(); d.setHours(Math.floor(h), Math.round((h % 1) * 60), 0);
+      return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+    };
+
+    function showColorNote() {
+      const note = field("demo-color-note");
+      note.replaceChildren();
+      if (!look.color) return note.append("Using the template's default blue.");
+      if (!accentFit) return note.append("That color couldn't be used, so the default is showing.");
+      const swatch = el("span", { class: "demo-swatch", "aria-hidden": "true" });
+      swatch.style.background = accentFit.lightHex;
+      note.append(swatch, accentFit.adjusted
+        ? `Links and buttons use ${accentFit.lightHex}, a deeper shade, so text stays readable.`
+        : "Used as-is: it already meets contrast for text.");
+    }
+
+    function showLogo() {
+      const preview = field("demo-logo-preview");
+      preview.replaceChildren(look.logo ? el("img", { src: look.logo, alt: "" }) : el("span", {}, initials(look.name || "Quicklinks")));
+      field("demo-logo-action").textContent = look.logo ? "Replace logo" : "Upload logo";
+      field("demo-logo-clear").hidden = !look.logo;
+    }
+
+    // look → fields
+    function fill() {
+      field("demo-name").value = look.name;
+      field("demo-tagline").value = look.tagline;
+      colorText.value = look.color;
+      colorText.removeAttribute("aria-invalid");
+      if (look.color) colorPick.value = toHex(cssColorToRgb(look.color));
+      for (const radio of panel.querySelectorAll('input[name="type"]')) radio.checked = radio.value === look.type;
+      hourRange.value = look.hour ?? currentHour();
+      hourOut.textContent = look.hour == null ? "Live" : hourLabel(look.hour);
+      field("demo-companies").checked = look.companies;
+      field("demo-companies").disabled = !C.companies.length;
+      showLogo();
+      showColorNote();
+    }
+
+    function update(changes, { persist = true } = {}) {
+      Object.assign(look, changes);
+      applyLook();
+      if (persist) save();
+      showLogo();
+      showColorNote();
+    }
+
+    field("demo-name").addEventListener("input", (e) => { update({ name: e.target.value.trim() }); });
+    field("demo-tagline").addEventListener("input", (e) => update({ tagline: e.target.value.trim() }));
+    colorPick.addEventListener("input", () => { colorText.value = colorPick.value; colorText.removeAttribute("aria-invalid"); update({ color: colorPick.value }); });
+    colorText.addEventListener("input", () => {
+      const value = colorText.value.trim();
+      const ok = value === "" || CSS.supports("color", value);
+      colorText.toggleAttribute("aria-invalid", !ok);
+      if (!ok) return;
+      if (value) colorPick.value = toHex(cssColorToRgb(value));
+      update({ color: value });
+    });
+    for (const radio of panel.querySelectorAll('input[name="type"]')) radio.addEventListener("change", () => update({ type: radio.value }));
+    hourRange.addEventListener("input", () => { hourOut.textContent = hourLabel(+hourRange.value); update({ hour: +hourRange.value }, { persist: false }); });
+    field("demo-hour-live").addEventListener("click", () => { update({ hour: null }, { persist: false }); fill(); });
+    field("demo-companies").addEventListener("change", (e) => update({ companies: e.target.checked }));
+
+    field("demo-logo").addEventListener("change", (e) => {
+      const file = e.target.files?.[0];
+      e.target.value = "";
+      if (!file) return;
+      const problem = !/^image\/(png|jpeg|webp|svg\+xml)$/.test(file.type) ? "That isn't an SVG, PNG, JPG or WebP image."
+        : file.size > MAX_LOGO_BYTES ? `That file is ${(file.size / 1048576).toFixed(1)} MB. Use an SVG or a PNG under 1 MB.` : "";
+      logoNote.classList.toggle("is-error", !!problem);
+      logoNote.textContent = problem || LOGO_HINT;
+      if (problem) return;
+      const reader = new FileReader();
+      reader.onload = () => update({ logo: String(reader.result) });
+      reader.onerror = () => { logoNote.classList.add("is-error"); logoNote.textContent = "Couldn't read that file. Try another."; };
+      reader.readAsDataURL(file);
+    });
+    field("demo-logo-clear").addEventListener("click", () => update({ logo: "" }));
+
+    field("demo-share").addEventListener("click", () => {
+      const url = new URL(location.pathname, location.origin);
+      const base = contentLook();
+      if (look.name !== base.name) url.searchParams.set("name", look.name);
+      if (look.tagline !== base.tagline) url.searchParams.set("tagline", look.tagline);
+      if (look.color && look.color !== base.color) url.searchParams.set("color", look.color);
+      if (look.type !== base.type) url.searchParams.set("type", look.type);
+      if (look.hour != null) url.searchParams.set("hour", String(look.hour));
+      if (!look.companies) url.searchParams.set("companies", "0");
+      copyText(url.href, look.logo.startsWith("data:") ? "link (uploaded logos stay on this device)" : "link");
+    });
+
+    field("demo-reset").addEventListener("click", () => {
+      try { localStorage.removeItem("ql:demo"); } catch {}
+      history.replaceState(null, "", location.pathname);
+      Object.assign(look, contentLook());
+      applyLook();
+      fill();
+      logoNote.classList.remove("is-error");
+      logoNote.textContent = LOGO_HINT;
+      toast("Reset to the template's defaults");
+    });
+
+    // A side panel, not a modal: the page stays visible so every change shows as you make it.
+    const root = document.documentElement;
+    const open = () => {
+      fill();
+      panel.show();
+      panel.scrollTop = 0;
+      root.classList.add("demo-open");
+      fab.setAttribute("aria-expanded", "true");
+      field("demo-name").focus({ preventScroll: true });
+    };
+    const close = () => { panel.close(); root.classList.remove("demo-open"); fab.setAttribute("aria-expanded", "false"); fab.focus(); };
+    fab.addEventListener("click", () => (panel.open ? close() : open()));
+    field("demo-close").addEventListener("click", close);
+    panel.addEventListener("keydown", (e) => { if (e.key === "Escape") { e.preventDefault(); close(); } });
+    $("#demo-form").addEventListener("submit", (e) => e.preventDefault());
+  }
+
+  /* ------------------------------------------------------------------ *
    * Go. Each tile renders on its own, so one bad section can't blank the page.
    * ------------------------------------------------------------------ */
   function section(name, tileSel, render) {
@@ -1196,8 +1417,9 @@
     }
   }
 
-  try { applyTheme(); } // a bad theme must never cost the page
+  try { document.documentElement.dataset.type = look.type; accentFit = applyAccent(look.color); } // a bad theme must never cost the page
   catch (err) { console.error("[quicklinks] theme couldn't be applied; using defaults:", err); }
+  lastType = look.type;
   renderChrome();
   applyColorMode();
   section("announcements", "#announcements", renderAnnouncements);
@@ -1210,6 +1432,7 @@
   section("apps", ".apps", renderApps);
   section("files", ".files", renderFiles);
   section("companies", ".companies", renderCompanies);
+  try { setupDemo(); } catch (err) { console.error("[quicklinks] demo customizer failed:", err); }
   displayFontReady().then(() => {
     document.documentElement.classList.add("ready");
     fitLegibility(); // the display face changes the greeting's size, so re-measure the hero
