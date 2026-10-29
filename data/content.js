@@ -28,7 +28,7 @@ window.QUICKLINKS = {
      Try one before committing: add ?type=modern&color=%23e4572e to the page address. */
   theme: {
     color: "#3b4bf5",
-    type: "editorial",
+    type: "modern",
   },
 
   settings: {
@@ -211,39 +211,46 @@ window.QUICKLINKS = {
 
   companies: [
     {
-      name: "Northwind Logistics",
+      name: "Schmidbauer Lumber Company",
       logo: "assets/logos/northwind.svg",
       phone: "(707) 014-2200",
-      email: "info@northwind.example.com",
-      website: "https://northwind.example.com/",
+      email: "info@schmidbauerlumber.com",
+      website: "https://schmidbauerlumber.com/",
     },
     {
-      name: "Harbor & Pine Builders",
+      name: "North Fork Lumber Company",
       logo: "assets/logos/harbor-pine.svg",
       phone: "(707) 018-7310",
-      email: "info@harborpine.example.com",
-      website: "https://harborpine.example.com/",
+      email: "info@nflmill.com",
+      website: "https://northforklumbercompany.com/",
     },
     {
-      name: "Summit Ridge Supply",
+      name: "Trinity River Lumber Company",
       logo: "assets/logos/summit-ridge.svg",
-      phone: "(707) 012-9045",
-      email: "info@summitridge.example.com",
-      website: "https://summitridge.example.com/",
+      phone: "(530) 012-9045",
+      email: "info@trlcmill.com",
+      website: "https://trinityriverlumbercompany.com/",
     },
     {
-      name: "Bluefield Energy",
+      name: "Shasta SRM",
       logo: "assets/logos/bluefield.svg",
-      phone: "(707) 016-3388",
-      email: "info@bluefield.example.com",
-      website: "https://bluefield.example.com/",
+      phone: "(530) 016-3388",
+      email: "info@srm-energy.com",
+      website: "https://srm-energy.com/",
     },
     {
-      name: "Cedar Point Realty",
+      name: "Spanish Trail Lumber Company",
       logo: "assets/logos/cedar-point.svg",
       phone: "(707) 011-5600",
-      email: "info@cedarpoint.example.com",
-      website: "https://cedarpoint.example.com/",
+      email: "info@spanishtrail.com",
+      website: "https://spanishtraillumber.com/",
+    },
+    {
+      name: "Grayson Lumber Company",
+      logo: "assets/logos/cedar-point.svg",
+      phone: "(707) 011-5600",
+      email: "info@graysonlumber.com",
+      website: "https://graysonlumber.com/",
     },
   ],
 };
