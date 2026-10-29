@@ -17,9 +17,9 @@ window.QUICKLINKS = {
   /* The company this intranet belongs to. Leave logo empty ("") to show the
      name's initials in the brand color instead. */
   company: {
-    name: "Your Company",
+    name: "Meridian Group",
     tagline: "Intranet",
-    logo: "",
+    logo: "assets/logos/company.svg",
   },
 
   /* Brand look.
@@ -48,7 +48,7 @@ window.QUICKLINKS = {
   announcements: [
     {
       text: "Benefits open enrollment is coming up. Review your options before the deadline.",
-      link: { label: "Learn more", url: "https://www.office.com/" },
+      link: { label: "Learn more", url: "demo/sample.html?p=news" },
       tone: "info",
     },
   ],
@@ -60,15 +60,15 @@ window.QUICKLINKS = {
   },
 
   it: {
-    phone: "(707) 442-8393",
+    phone: "(555) 010-4357",
     ext: "4357",
-    email: "support@trustbiztech.com",
+    email: "helpdesk@example.com",
     // Paste a Teams chat link. For a single person or shared mailbox:
-    // https://teams.microsoft.com/l/chat/0/0?users=support@trustbiztech.com
-    teamsChat: "https://teams.microsoft.com/l/chat/0/0?users=support@trustbiztech.com",
-    ticketUrl: "mailto:support@trustbiztech.com?subject=IT%20Ticket%3A%20",
+    // https://teams.microsoft.com/l/chat/0/0?users=helpdesk@yourcompany.com
+    teamsChat: "demo/sample.html?p=teams",
+    ticketUrl: "demo/sample.html?p=ticket",
     hours: "Mon – Fri · 7:30 AM – 5:30 PM",
-    afterHours: "(707) 442-8393",
+    afterHours: "(555) 010-9111",
   },
 
   /* Launchpad. `tint` is the icon color. */
@@ -122,7 +122,7 @@ window.QUICKLINKS = {
       id: "401k",
       name: "401(k)",
       description: "Retirement account",
-      url: "#",
+      url: "demo/sample.html?p=401k",
       icon: "trend",
       tint: "#1f8a5b",
       keywords: "retirement 401k savings invest",
@@ -131,7 +131,7 @@ window.QUICKLINKS = {
       id: "benefits",
       name: "Insurance",
       description: "Medical, dental & vision",
-      url: "#",
+      url: "demo/sample.html?p=benefits",
       icon: "shield",
       tint: "#0e8f9c",
       keywords: "health medical dental vision insurance benefits",
@@ -139,8 +139,8 @@ window.QUICKLINKS = {
     {
       id: "website",
       name: "Company Website",
-      description: "yourcompany.com",
-      url: "#",
+      description: "meridian.example",
+      url: "demo/sample.html?p=website",
       icon: "globe",
       tint: "#7c4dff",
       keywords: "site public web",
@@ -175,10 +175,10 @@ window.QUICKLINKS = {
     },
     {
       id: "holidays",
-      name: "Holiday Schedule 2026",
-      file: "files/holiday-schedule-2026.pdf",
+      name: "Holiday Schedule 2026–2027",
+      file: "files/holiday-schedule.pdf",
       category: "Calendar",
-      updated: "Dec 2025",
+      updated: "Oct 2026",
       keywords: "days off office closed",
     },
     {
@@ -228,35 +228,35 @@ window.QUICKLINKS = {
       logo: "assets/logos/northwind.svg",
       phone: "(555) 014-2200",
       email: "info@northwind.example.com",
-      website: "https://northwind.example.com/",
+      website: "demo/sample.html?p=company&name=Northwind%20Logistics",
     },
     {
       name: "Harbor & Pine Builders",
       logo: "assets/logos/harbor-pine.svg",
       phone: "(555) 018-7310",
       email: "info@harborpine.example.com",
-      website: "https://harborpine.example.com/",
+      website: "demo/sample.html?p=company&name=Harbor%20%26%20Pine%20Builders",
     },
     {
       name: "Summit Ridge Supply",
       logo: "assets/logos/summit-ridge.svg",
       phone: "(555) 012-9045",
       email: "info@summitridge.example.com",
-      website: "https://summitridge.example.com/",
+      website: "demo/sample.html?p=company&name=Summit%20Ridge%20Supply",
     },
     {
       name: "Bluefield Energy",
       logo: "assets/logos/bluefield.svg",
       phone: "(555) 016-3388",
       email: "info@bluefield.example.com",
-      website: "https://bluefield.example.com/",
+      website: "demo/sample.html?p=company&name=Bluefield%20Energy",
     },
     {
       name: "Cedar Point Realty",
       logo: "assets/logos/cedar-point.svg",
       phone: "(555) 011-5600",
       email: "info@cedarpoint.example.com",
-      website: "https://cedarpoint.example.com/",
+      website: "demo/sample.html?p=company&name=Cedar%20Point%20Realty",
     },
   ],
 };

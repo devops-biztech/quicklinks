@@ -42,7 +42,14 @@ The interface font adds ~33KB to every preset except `system`.
 
 ## Demo mode (showing it to a prospective client)
 
-The `main` branch is a generic demo: "Your Company", sample sister companies, and `settings.demo: true` in `content.js`. Demo mode adds a **Customize demo** button that opens a side panel where you can, live:
+The `main` branch is a complete, generic demo you can deploy as-is. Everything clicks through to something real:
+
+- **Meridian Group**, a fictional company with five fictional sister companies and a fictional IT help desk (all `555` numbers and `example.com` addresses).
+- **Sample documents** in `files/`: a phone list, PTO request form, holiday schedule (PDF), an expense report with working formulas (Excel), a letterhead template (Word) and a logo pack (ZIP). Each is marked "Sample document for demonstration".
+- **Sample pages** for links that would go to a client's own providers: 401(k), benefits, company website, sister company sites, the announcement, the IT ticket form and the Teams chat. One page, `demo/sample.html?p=…`, explains what the real link would do.
+- **Real links** where they're generic for any Microsoft 365 company: Outlook, Teams, OneDrive, Microsoft 365, and ADP.
+
+`settings.demo: true` in `content.js` also adds a **Customize demo** button that opens a side panel where you can, live:
 
 - type the client's **company name** and **tagline**
 - drop in their **logo** (SVG or PNG under 1 MB, or leave it empty for their initials)
@@ -55,9 +62,9 @@ Changes are saved on that device only. **Copy link** makes a link that reproduce
 https://your-demo.vercel.app/?name=Harborview+Health&color=%230a7d6e&type=friendly
 ```
 
-Uploaded logos can't travel in a link, so drop the logo in again when presenting on another device. **Reset** returns to the template defaults. In demo mode, file links show a "demo" note instead of a missing file.
+Uploaded logos can't travel in a link, so drop the logo in again when presenting on another device. **Reset** returns to the template defaults.
 
-For a real company's intranet, set `settings.demo` to `false`. The panel disappears and `?name=` and `?tagline=` are ignored.
+**Turning the demo into a real company's intranet:** set `settings.demo` to `false` (the panel disappears and `?name=` and `?tagline=` are ignored), replace the content in `content.js`, swap the sample documents in `files/` for the real ones, and delete the `demo/` folder once nothing links to it.
 
 ## Editing content
 
@@ -132,7 +139,8 @@ When a form changes, replace the file but **keep the same name**. That way links
 ```
 index.html               page shell
 data/content.js          ← all content (the file you edit)
-files/                   forms & documents served to staff
+files/                   forms & documents served to staff (sample documents in the demo)
+demo/sample.html         demo stand-in for links to a client's own providers
 assets/css/styles.css    design
 assets/js/app.js         rendering, search, pins, sky
 assets/js/theme.js       applies saved theme before first paint

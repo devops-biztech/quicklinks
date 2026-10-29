@@ -126,7 +126,9 @@
   const relDays = (n) => (n === 0 ? "today" : n === 1 ? "tomorrow" : `in ${n} days`);
 
   const telHref = (phone) => "tel:" + String(phone).replace(/[^\d+]/g, "");
-  const hostOf = (url) => { try { return new URL(url).host.replace(/^www\./, ""); } catch { return url; } };
+  // Domain to show for a site. Relative links (demo sample pages) have none, so callers can fall back.
+  const hostOf = (url) => { try { return new URL(url).host.replace(/^www\./, ""); } catch { return ""; } };
+  const domainOf = (co) => hostOf(co.website) || (co.email.split("@")[1] || "");
   const extOf = (path) => (String(path).split(/[?#]/)[0].split("/").pop().split(".").slice(1).pop() || "").toLowerCase();
   const fold = (s) => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
@@ -308,7 +310,7 @@
         const name = named(f, where);
         if (!name) return null;
         return {
-          id: uniqueId(f.id, name, where), name, url: DATA.settings?.demo === true ? "" : safeUrl(f.file, where), ext: extOf(str(f.file)),
+          id: uniqueId(f.id, name, where), name, url: safeUrl(f.file, where), ext: extOf(str(f.file)),
           category: str(f.category), updated: str(f.updated), keywords: words(f.keywords),
         };
       }).filter(Boolean),
@@ -398,7 +400,7 @@
   for (const co of C.companies) {
     add({ id: "co:" + co.id, kind: "Company", title: co.name, logo: co.logo, url: co.website, co,
       subtitle: [co.phone, co.email].filter(Boolean).join(" · "),
-      keywords: `${co.keywords} ${co.phone} ${co.email} ${co.website ? hostOf(co.website) : ""} sister company contact` });
+      keywords: `${co.keywords} ${co.phone} ${co.email} ${domainOf(co)} sister company contact` });
   }
 
   const IT = C.it;
@@ -980,7 +982,7 @@
           el("span", { class: "company-logo" }, logoImg(co.logo, co.name)),
           el("div", {},
             el("h3", { class: "company-name" }, co.name),
-            co.website && el("p", { class: "company-host" }, hostOf(co.website)))),
+            domainOf(co) && el("p", { class: "company-host" }, domainOf(co)))),
         (co.phone || co.email) && el("ul", { class: "company-contacts" },
           co.phone && el("li", {}, icon("phone"), el("a", { href: telHref(co.phone), class: "num" }, co.phone), copyButton(co.phone, `${co.name} phone number`)),
           co.email && el("li", {}, icon("mail"), el("a", { href: "mailto:" + co.email, title: co.email }, co.email), copyButton(co.email, `${co.name} email`))),

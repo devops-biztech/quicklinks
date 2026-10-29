@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Sample page · Quicklinks demo</title>
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <script src="../assets/js/theme.js"></script>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <script src="../assets/js/sample.js" defer></script>
+</head>
+<body class="sample-body">
+  <!-- Demo stand-in for links that would point at a client's own providers (401(k), benefits, website, help desk). -->
+  <main class="sample" id="main">
+    <p class="sample-badge"><span class="dot" aria-hidden="true"></span>Sample page for the demo</p>
+    <h1 class="sample-title" id="sample-title">Sample page</h1>
+    <p class="sample-lead" id="sample-lead">In a real intranet, this link opens the company's own site.</p>
+    <ul class="sample-list" id="sample-list"></ul>
+    <form class="sample-form" id="sample-form" hidden>
+      <div class="demo-field">
+        <label for="t-subject">What's going on?</label>
+        <input id="t-subject" type="text" placeholder="e.g. Printer on 2nd floor won't connect">
+      </div>
+      <div class="demo-field">
+        <label for="t-urgency">How urgent is it?</label>
+        <select id="t-urgency">
+          <option>Whenever you get a chance</option>
+          <option>It's slowing me down</option>
+          <option>I can't work</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" type="submit">Submit ticket</button>
+      <p class="sample-note" id="sample-form-note" role="status"></p>
+    </form>
+    <a class="btn sample-back" href="../index.html">← Back to the intranet</a>
+  </main>
+</body>
+</html>

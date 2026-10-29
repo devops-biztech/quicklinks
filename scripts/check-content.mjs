@@ -31,14 +31,17 @@ const isDate = (s) => {
   const d = new Date(+m[1], +m[2] - 1, +m[3]);
   return d.getMonth() === +m[2] - 1 && d.getDate() === +m[3]; // rejects 2026-02-30
 };
-const isUrl = (s) => typeof s === "string" && (s === "#" || /^(https?:|mailto:|tel:|msteams:|sms:)/.test(s));
+// Absolute links, or relative paths inside the site (e.g. demo/sample.html?p=401k) — which must exist.
+const isRelative = (s) => typeof s === "string" && s !== "" && !/^[a-z][a-z0-9+.-]*:/i.test(s) && !s.startsWith("//") && !s.startsWith("#");
+const isUrl = (s) => typeof s === "string" && (s === "#" || /^(https?:|mailto:|tel:|msteams:|sms:)/.test(s) || isRelative(s));
 const badScheme = (s) => typeof s === "string" && /^[a-z][a-z0-9+.-]*:/i.test(s) && !isUrl(s);
 const listOf = (value, where) => {
   if (value == null) return [];
   if (!Array.isArray(value)) { errors.push(`${where} should be a list: [ … ]`); return []; }
   return value.filter((v, i) => (v && typeof v === "object" && !Array.isArray(v)) || (errors.push(`${where}[${i}] isn't a { … } block`), false));
 };
-const exists = (p) => existsSync(join(root, p));
+const exists = (p) => existsSync(join(root, p.split(/[?#]/)[0]));
+const checkTarget = (url, where) => { if (isRelative(url) && !exists(url)) errors.push(`${where}: "${url}" points to a file that isn't in the project`); };
 
 const ids = new Set();
 const checkId = (id, where) => {
@@ -53,6 +56,7 @@ for (const [i, app] of listOf(data.apps, "apps").entries()) {
   if (!app.name) errors.push(`${where}: missing "name"`);
   if (!isUrl(app.url)) errors.push(`${where}: "url" should start with https://`);
   if (app.url === "#") warnings.push(`${where}: link not set yet`);
+  checkTarget(app.url, where);
   if (app.icon && /[./]/.test(app.icon) && !exists(app.icon)) errors.push(`${where}: icon image not found: ${app.icon}`);
 }
 
@@ -69,6 +73,7 @@ for (const [i, co] of listOf(data.companies, "companies").entries()) {
   const where = `companies[${i}] (${co.name || "?"})`;
   if (!co.name) errors.push(`${where}: missing "name"`);
   if (co.website && !isUrl(co.website)) errors.push(`${where}: "website" should start with https://`);
+  checkTarget(co.website, where);
   if (co.logo && !exists(co.logo)) warnings.push(`${where}: logo not found: ${co.logo} (initials will show instead)`);
 }
 
@@ -83,11 +88,13 @@ if (lastHoliday && lastHoliday < new Date().toISOString().slice(0, 10)) warnings
 for (const [i, a] of listOf(data.announcements, "announcements").entries()) {
   if (!a.text) errors.push(`announcements[${i}]: missing "text"`);
   for (const key of ["from", "until"]) if (a[key] && !isDate(a[key])) errors.push(`announcements[${i}]: "${key}" must be YYYY-MM-DD`);
-  if (a.link && !isUrl(a.link.url) && !/^files\//.test(a.link.url || "")) errors.push(`announcements[${i}]: link url should start with https://`);
+  if (a.link && !isUrl(a.link.url)) errors.push(`announcements[${i}]: link url should start with https://`);
+  if (a.link) checkTarget(a.link.url, `announcements[${i}]`);
 }
 
 for (const key of ["teamsChat", "ticketUrl"]) {
   if (data.it?.[key] && !isUrl(data.it[key])) errors.push(`it.${key} should start with https:// or mailto:`);
+  checkTarget(data.it?.[key], `it.${key}`);
 }
 if (data.updated && !isDate(data.updated)) errors.push(`"updated" must be YYYY-MM-DD`);
 

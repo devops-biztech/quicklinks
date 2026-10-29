@@ -15,6 +15,7 @@ rsync -avz --delete \
   --include='assets/***' \
   --include='data/***' \
   --include='files/***' \
+  --include='demo/***' \
   --exclude='*' \
   ./ "$TARGET:$DEST"
 
