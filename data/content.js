@@ -12,12 +12,14 @@
    ========================================================================== */
 
 window.QUICKLINKS = {
-  updated: "2026-10-07",
+  updated: "2026-10-29",
 
+  /* The company this intranet belongs to. Leave logo empty ("") to show the
+     name's initials in the brand color instead. */
   company: {
-    name: "Biztech",
+    name: "Your Company",
     tagline: "Intranet",
-    logo: "assets/logos/company.svg",
+    logo: "",
   },
 
   /* Brand look.
@@ -33,16 +35,20 @@ window.QUICKLINKS = {
 
   settings: {
     openLinksInNewTab: true,
+    // Demo deployments only: shows the "Customize demo" panel for showing the page to a client
+    // (their name, logo, color and type style, live). Set to false for a real company's intranet.
+    demo: true,
   },
+
+  // Heading over the sister-company cards, e.g. "Our family of companies" or "Smith Group divisions".
+  companiesTitle: "Family of companies",
 
   /* Banner across the top. Shown only between `from` and `until`.
      tone: "info" | "warning" */
   announcements: [
     {
-      text: "Open enrollment for 2027 benefits runs Oct 19 – Nov 6.",
-      link: { label: "Review your options", url: "#" },
-      from: "2026-10-01",
-      until: "2026-11-06",
+      text: "Benefits open enrollment is coming up. Review your options before the deadline.",
+      link: { label: "Learn more", url: "https://www.office.com/" },
       tone: "info",
     },
   ],
@@ -133,8 +139,8 @@ window.QUICKLINKS = {
     {
       id: "website",
       name: "Company Website",
-      description: "trustbiztech.com",
-      url: "https://trustbiztech.com/",
+      description: "yourcompany.com",
+      url: "#",
       icon: "globe",
       tint: "#7c4dff",
       keywords: "site public web",
@@ -206,6 +212,13 @@ window.QUICKLINKS = {
       { name: "Christmas Eve", date: "2026-12-24" },
       { name: "Christmas Day", date: "2026-12-25" },
       { name: "New Year's Day", date: "2027-01-01" },
+      { name: "Memorial Day", date: "2027-05-31" },
+      { name: "Independence Day (observed)", date: "2027-07-05" },
+      { name: "Labor Day", date: "2027-09-06" },
+      { name: "Thanksgiving Day", date: "2027-11-25" },
+      { name: "Day after Thanksgiving", date: "2027-11-26" },
+      { name: "Christmas Eve", date: "2027-12-24" },
+      { name: "New Year's Day (observed)", date: "2027-12-31" },
     ],
   },
 
@@ -213,35 +226,35 @@ window.QUICKLINKS = {
     {
       name: "Northwind Logistics",
       logo: "assets/logos/northwind.svg",
-      phone: "(707) 014-2200",
+      phone: "(555) 014-2200",
       email: "info@northwind.example.com",
       website: "https://northwind.example.com/",
     },
     {
       name: "Harbor & Pine Builders",
       logo: "assets/logos/harbor-pine.svg",
-      phone: "(707) 018-7310",
+      phone: "(555) 018-7310",
       email: "info@harborpine.example.com",
       website: "https://harborpine.example.com/",
     },
     {
       name: "Summit Ridge Supply",
       logo: "assets/logos/summit-ridge.svg",
-      phone: "(707) 012-9045",
+      phone: "(555) 012-9045",
       email: "info@summitridge.example.com",
       website: "https://summitridge.example.com/",
     },
     {
       name: "Bluefield Energy",
       logo: "assets/logos/bluefield.svg",
-      phone: "(707) 016-3388",
+      phone: "(555) 016-3388",
       email: "info@bluefield.example.com",
       website: "https://bluefield.example.com/",
     },
     {
       name: "Cedar Point Realty",
       logo: "assets/logos/cedar-point.svg",
-      phone: "(707) 011-5600",
+      phone: "(555) 011-5600",
       email: "info@cedarpoint.example.com",
       website: "https://cedarpoint.example.com/",
     },

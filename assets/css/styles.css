@@ -241,7 +241,9 @@ html { caret-color: var(--accent); scrollbar-color: var(--line-strong) transpare
 @keyframes failsafe-reveal { to { visibility: visible; } }
 
 /* ---------- Layout ---------- */
+/* Layout reacts to the space it actually has (e.g. beside the demo panel), not just the window. */
 .shell {
+  container: shell / inline-size;
   max-width: 1320px;
   margin: 0 auto;
   padding: 0 28px 40px;
@@ -254,7 +256,20 @@ html { caret-color: var(--accent); scrollbar-color: var(--line-strong) transpare
   min-height: 72px;
 }
 .brand { display: flex; align-items: center; gap: 10px; border-radius: 10px; }
-.brand-logo { width: 28px; height: 28px; }
+.brand-logo { width: 28px; height: 28px; object-fit: contain; }
+/* Initials stand in for a missing logo, in the brand color. */
+.brand-mono {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: var(--text-key);
+  font-weight: 750;
+  letter-spacing: 0.02em;
+  color: var(--accent-ink);
+  background: var(--accent);
+}
 .brand-name { font-weight: 650; font-size: var(--text-lead); letter-spacing: -0.01em; }
 .brand-tag {
   font-size: var(--text-meta);
@@ -384,6 +399,7 @@ html { caret-color: var(--accent); scrollbar-color: var(--line-strong) transpare
   padding: 26px 32px 30px;
   overflow: hidden;
   isolation: isolate;
+  container-type: inline-size;
   border: 0;
   color: var(--hero-ink);
   background: var(--sky-mid);
@@ -486,7 +502,7 @@ html { caret-color: var(--accent); scrollbar-color: var(--line-strong) transpare
   padding: 36px 0 28px;
   font-family: var(--font-display);
   font-weight: var(--display-weight);
-  font-size: calc(clamp(3.375rem, 7.2vw, 6.5rem) * var(--display-scale));
+  font-size: calc(clamp(3.375rem, 12.4cqi, 6.5rem) * var(--display-scale));
   line-height: var(--display-leading);
   letter-spacing: var(--display-tracking);
   font-synthesis: none;
@@ -1100,6 +1116,160 @@ dialog[open]::backdrop { animation: fade 0.22s ease; }
 }
 .fatal code { font-size: var(--text-meta); }
 
+/* ---------- Demo customizer (settings.demo only) ---------- */
+.demo-fab {
+  position: fixed;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 18px 0 14px;
+  border-radius: 999px;
+  font-weight: 650;
+  font-size: var(--text-small);
+  color: var(--accent-ink);
+  background: var(--accent);
+  box-shadow: 0 10px 30px -10px var(--shade-3), 0 2px 6px var(--shade-1);
+  transition: transform 0.2s var(--ease), background 0.2s;
+}
+.demo-fab:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.demo-fab[aria-expanded="true"] { visibility: hidden; }
+.demo-fab .ic { width: 18px; height: 18px; }
+.is-demo .footer { padding-bottom: 72px; }
+
+.demo-panel {
+  position: fixed;
+  inset: 12px 12px 12px auto;
+  z-index: 45;
+  width: min(380px, calc(100vw - 24px));
+  height: auto;
+  max-height: calc(100dvh - 24px);
+  margin: 0;
+  border-radius: 22px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  box-shadow: var(--shadow-pop);
+}
+.demo-panel[open] { animation: slide-in 0.28s var(--ease); }
+.demo-form { display: grid; gap: 18px; padding: 20px 20px 18px; }
+.demo-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.demo-head h2 {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  font-synthesis: none;
+  font-size: calc(1.75rem * var(--display-scale));
+  letter-spacing: var(--display-tracking);
+  line-height: 1.05;
+}
+.demo-sub { margin-top: 6px; font-size: var(--text-meta); color: var(--ink-3); }
+.demo-field { display: grid; gap: 6px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.demo-field > label, .demo-label, .demo-label-row label { font-size: var(--text-small); font-weight: 650; color: var(--ink); padding: 0; }
+.demo-label-row { display: flex; justify-content: space-between; align-items: baseline; }
+.demo-label-row output { font-size: var(--text-meta); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.demo-field input[type="text"] {
+  min-height: 42px;
+  padding: 0 12px;
+  border-radius: 11px;
+  font: inherit;
+  font-size: var(--text-body);
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+}
+.demo-field input[type="text"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.demo-field input[aria-invalid] { border-color: var(--outage); }
+.demo-note { font-size: var(--text-meta); color: var(--ink-3); display: flex; align-items: center; gap: 8px; }
+.demo-note.is-error { color: color-mix(in oklab, var(--outage) 75%, var(--ink)); }
+.demo-swatch { flex: none; width: 14px; height: 14px; border-radius: 4px; box-shadow: inset 0 0 0 1px var(--line-strong); }
+
+.demo-logo-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.demo-logo-row .btn { cursor: pointer; }
+.demo-logo-row input[type="file"]:focus-visible + .btn,
+.demo-logo-row .btn:has(+ input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.demo-logo-preview {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  overflow: hidden;
+  font-weight: 750;
+  font-size: var(--text-small);
+  color: var(--accent-ink);
+  background: var(--accent);
+}
+.demo-logo-preview:has(img) { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.demo-logo-preview img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+
+.demo-color-row { display: flex; gap: 8px; }
+.demo-color-row input[type="color"] {
+  flex: none;
+  width: 48px;
+  height: 42px;
+  padding: 3px;
+  border-radius: 11px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+}
+.demo-color-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.demo-color-row input[type="color"]::-webkit-color-swatch { border: 0; border-radius: 8px; }
+.demo-color-row input[type="text"] { flex: 1; min-width: 0; font-variant-numeric: tabular-nums; }
+
+.demo-type-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.demo-type {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.demo-type:hover { border-color: var(--line-strong); }
+.demo-type input { position: absolute; opacity: 0; pointer-events: none; }
+.demo-type:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+.demo-type:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.demo-type-sample { font-size: 1.25rem; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-synthesis: none; }
+.demo-type-sample[data-sample="editorial"] { font-family: "Source Serif Display", Georgia, serif; }
+.demo-type-sample[data-sample="editorial"] em { font-style: italic; }
+.demo-type-sample[data-sample="modern"] { font-family: "Bricolage Display", sans-serif; font-weight: 620; letter-spacing: -0.03em; font-size: 1.125rem; }
+.demo-type-sample[data-sample="friendly"] { font-family: "Fredoka Display", sans-serif; font-weight: 560; font-size: 1.125rem; }
+.demo-type-sample[data-sample="system"] { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-weight: 680; letter-spacing: -0.03em; font-size: 1.125rem; }
+.demo-type-name { font-size: var(--text-meta); color: var(--ink-3); }
+
+.demo-hour-row { display: flex; align-items: center; gap: 8px; }
+.demo-hour-row input[type="range"] { flex: 1; min-width: 0; height: 32px; }
+.demo-actions { display: flex; gap: 8px; padding-top: 4px; border-top: 1px solid var(--line); padding-top: 16px; }
+.demo-actions .btn-primary { flex: 1; }
+
+@keyframes slide-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+
+/* Wide screens: slide the page over so the whole intranet stays in view while customizing. */
+@media (min-width: 1400px) {
+  .is-demo .shell { transition: padding 0.3s var(--ease); }
+  .demo-open .shell { padding-right: 412px; }
+}
+
+@media (max-width: 720px) {
+  .demo-fab { right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); }
+  /* On phones the customizer is a bottom sheet over the lower half of the page. */
+  .demo-panel {
+    inset: auto 0 0 0;
+    width: 100%;
+    max-height: 62dvh;
+    border-radius: 22px 22px 0 0;
+  }
+  .demo-panel[open] { animation-name: sheet-in; }
+  .demo-form { padding-bottom: max(18px, env(safe-area-inset-bottom)); }
+}
+@keyframes sheet-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+
 /* ---------- Windows high contrast ---------- */
 @media (forced-colors: active) {
   .tile, .app-link, .company, .file-link, .searchbar, .pin, .pins-empty, .btn, .announcement { border: 1px solid CanvasText; }
@@ -1172,7 +1342,7 @@ dialog[open]::backdrop { animation: fade 0.22s ease; }
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 1100px) {
+@container shell (max-width: 1100px) {
   .hero, .apps, .files { grid-column: span 12; }
   .hero { grid-row: auto; min-height: 400px; }
   .holiday, .it { grid-column: span 6; }
@@ -1190,7 +1360,7 @@ dialog[open]::backdrop { animation: fade 0.22s ease; }
 
   /* Phones: the greeting is a moment, not the whole first screen; search sits within thumb reach. */
   .hero { min-height: 0; padding: 18px 18px 20px; }
-  .greeting { padding: 44px 0 20px; font-size: calc(clamp(2.75rem, 13vw, 3.5rem) * var(--display-scale)); }
+  .greeting { padding: 44px 0 20px; font-size: calc(clamp(2.75rem, 14cqi, 3.5rem) * var(--display-scale)); }
   .searchbar { min-height: 54px; font-size: var(--text-lead); }
 
   /* Launchpad becomes a compact two-up list: icon left, name right. */
@@ -1234,6 +1404,6 @@ dialog[open]::backdrop { animation: fade 0.22s ease; }
 /* Short landscape phones: let the hero be as short as its content. */
 @media (max-height: 500px) and (orientation: landscape) {
   .hero { min-height: 0; }
-  .greeting { padding: 24px 0 16px; font-size: calc(clamp(2.5rem, 7vw, 3.5rem) * var(--display-scale)); }
+  .greeting { padding: 24px 0 16px; font-size: calc(clamp(2.5rem, 7.3cqi, 3.5rem) * var(--display-scale)); }
   .palette { margin-top: 8px; max-height: calc(100dvh - 16px); }
 }
