@@ -122,6 +122,20 @@ deploy/deploy.sh you@intranet-server
 
 This runs the content check and copies only the public files over.
 
+## Deploy (Cloudflare)
+
+The repo is ready for Cloudflare Workers static assets. There's no build step: Cloudflare serves the folder as-is. `wrangler.jsonc` is the config, `_headers` sets the same security headers as nginx, and `.assetsignore` keeps the scripts, deploy files and READMEs from being uploaded.
+
+From GitHub (redeploys on every push):
+
+1. In the Cloudflare dashboard, go to **Workers & Pages → Create → Import a repository** and pick this repo.
+2. Leave the build command empty. The deploy command is `npx wrangler deploy`.
+3. The site goes live at `quicklinks.<your-account>.workers.dev`. Add your own domain under **Settings → Domains & Routes**.
+
+From your computer instead: `npx wrangler login` once, then `npx wrangler deploy`. To preview the Cloudflare version locally, run `npx wrangler dev` and open http://localhost:8787.
+
+For a real company's intranet on Cloudflare, put **Cloudflare Access** (Zero Trust) in front of it with Microsoft Entra ID as the sign-in, so only staff can open it. It's free for up to 50 users.
+
 ## Moving files over from WordPress
 
 The current forms and documents are in the WordPress media library, under `wp-content/uploads/YYYY/MM/` on the server. Copy each one into `files/` with a clean, stable name such as `pto-request.pdf` or `expense-report.xlsx`, and update the matching entry in `content.js`.
@@ -149,4 +163,6 @@ assets/fonts/            self-hosted: Atkinson Hyperlegible Next (UI) + one disp
 scripts/check-content.mjs  content validator
 scripts/serve.mjs        local preview server (no caching)
 deploy/                  nginx config + deploy script
+wrangler.jsonc, _headers Cloudflare config (.assetsignore lists what is not uploaded)
+vercel.json              Vercel config
 ```

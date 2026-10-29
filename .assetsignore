@@ -1,0 +1,15 @@
+# Only the site itself is deployed: index.html, assets/, data/, files/, demo/
+.git
+.gitignore
+.claude
+.impeccable
+.vercel
+.vercelignore
+.wrangler
+.assetsignore
+node_modules
+scripts
+deploy
+*.md
+vercel.json
+wrangler.jsonc

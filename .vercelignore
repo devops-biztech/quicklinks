@@ -4,3 +4,6 @@
 scripts
 deploy
 *.md
+_headers
+.assetsignore
+wrangler.jsonc

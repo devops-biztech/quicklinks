@@ -1,0 +1,9 @@
+// Cloudflare Workers static assets: serves this folder as-is, no build step.
+// What gets uploaded is controlled by .assetsignore; headers by _headers.
+{
+  "name": "quicklinks",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "."
+  }
+}
